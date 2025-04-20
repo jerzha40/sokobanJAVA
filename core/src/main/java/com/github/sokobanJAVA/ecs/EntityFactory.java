@@ -3,6 +3,7 @@ package com.github.sokobanJAVA.ecs;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
 import com.github.sokobanJAVA.ecs.components.PositionComponent;
+import com.github.sokobanJAVA.ecs.components.SizeComponent;
 import com.github.sokobanJAVA.ecs.components.SpriteComponent;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.Texture;
@@ -28,6 +29,26 @@ public class EntityFactory {
         entity.add(pos); // 添加组件 :contentReference[oaicite:13]{index=13}
         entity.add(sprite);
         engine.addEntity(entity); // 注册到引擎 :contentReference[oaicite:14]{index=14}
+        return entity;
+    }
+
+    public Entity createRectangle(float x, float y, Texture texture, float width, float height) {
+        Entity entity = engine.createEntity();
+        PositionComponent pos = engine.createComponent(PositionComponent.class);
+        pos.position.set(x, y);
+
+        SizeComponent size = engine.createComponent(SizeComponent.class);
+        size.width = width;
+        size.height = height;
+
+        SpriteComponent sprite = engine.createComponent(SpriteComponent.class);
+        sprite.sprite = new Sprite(texture); // 使用白色像素纹理
+        sprite.sprite.setSize(width, height); // 设置大小 :contentReference[oaicite:2]{index=2}
+
+        entity.add(pos);
+        entity.add(size);
+        entity.add(sprite);
+        engine.addEntity(entity);
         return entity;
     }
 }

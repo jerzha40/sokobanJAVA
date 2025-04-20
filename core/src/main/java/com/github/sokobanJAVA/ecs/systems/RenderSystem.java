@@ -5,27 +5,33 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.Entity;
 import com.github.sokobanJAVA.ecs.components.PositionComponent;
 import com.github.sokobanJAVA.ecs.components.SpriteComponent;
+import com.github.sokobanJAVA.ecs.components.SizeComponent;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 
 public class RenderSystem extends IteratingSystem {
     private final SpriteBatch batch;
     private final ComponentMapper<PositionComponent> pm = ComponentMapper.getFor(PositionComponent.class);
-    private final ComponentMapper<SpriteComponent> sm = ComponentMapper.getFor(SpriteComponent.class);
+    private final ComponentMapper<SizeComponent> sm = ComponentMapper.getFor(SizeComponent.class);
+    private final ComponentMapper<SpriteComponent> spm = ComponentMapper.getFor(SpriteComponent.class);
 
     public RenderSystem(SpriteBatch batch) {
-        super(Family.all(PositionComponent.class, SpriteComponent.class).get()); // 关注位置与纹理组件
-                                                                                 // :contentReference[oaicite:16]{index=16}
+        super(Family.all(PositionComponent.class, SizeComponent.class, SpriteComponent.class).get());
         this.batch = batch;
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         PositionComponent pos = pm.get(entity);
-        SpriteComponent sp = sm.get(entity);
-        sp.sprite.setPosition(pos.position.x, pos.position.y);
+        SizeComponent size = sm.get(entity);
+        SpriteComponent spriteC = spm.get(entity);
+        Sprite sprite = spriteC.sprite;
+
+        sprite.setSize(size.width, size.height); // 根据组件调整大小 :contentReference[oaicite:4]{index=4}
+        sprite.setPosition(pos.position.x, pos.position.y);
         batch.begin();
-        sp.sprite.draw(batch); // 绘制纹理 :contentReference[oaicite:17]{index=17}
+        sprite.draw(batch); // SpriteBatch 渲染 :contentReference[oaicite:5]{index=5}
         batch.end();
     }
 }

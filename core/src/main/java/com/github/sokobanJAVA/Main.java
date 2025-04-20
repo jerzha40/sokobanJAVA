@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.sokobanJAVA.ecs.EntityFactory;
 import com.github.sokobanJAVA.ecs.systems.RenderSystem;
@@ -18,13 +18,14 @@ import com.github.sokobanJAVA.ecs.systems.RenderSystem;
  * platforms.
  */
 public class Main extends ApplicationAdapter {
-    private static final float VIRTUAL_WIDTH = 640;
-    private static final float VIRTUAL_HEIGHT = 480;
+    private static final float VIRTUAL_WIDTH = 500;
+    private static final float VIRTUAL_HEIGHT = 500;
 
     private OrthographicCamera camera;
     private Viewport viewport;
     private SpriteBatch batch;
     private Texture blockTexture;
+    private Texture frameboxTexture;
 
     private PooledEngine engine;
     private EntityFactory factory;
@@ -34,7 +35,7 @@ public class Main extends ApplicationAdapter {
 
         // 视口与相机
         camera = new OrthographicCamera();
-        viewport = new FitViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
+        viewport = new ExtendViewport(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, camera);
         viewport.apply();
         camera.position.set(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2, 0);
         camera.update();
@@ -44,6 +45,7 @@ public class Main extends ApplicationAdapter {
 
         // 加载资源
         blockTexture = new Texture("libgdx.png");
+        frameboxTexture = new Texture("selectbox.png");
 
         // ECS 引擎与工厂
         engine = new PooledEngine();
@@ -53,8 +55,9 @@ public class Main extends ApplicationAdapter {
         engine.addSystem(new RenderSystem(batch));
 
         // 创建一个方块实体，位置 (100,100)
-        factory.createBlock(200, 200, blockTexture);
-        factory.createBlock(0, 0, blockTexture);
+        factory.createRectangle(200, VIRTUAL_HEIGHT, frameboxTexture, 200, 200);
+        factory.createRectangle(0, 0, frameboxTexture, 200, 200);
+        factory.createRectangle(VIRTUAL_WIDTH, 0, frameboxTexture, 200, 200);
     }
 
     @Override
@@ -70,6 +73,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+        camera.position.set(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2, 0);
     }
 
     @Override
