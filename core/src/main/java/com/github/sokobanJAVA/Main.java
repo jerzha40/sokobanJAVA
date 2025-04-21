@@ -19,6 +19,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.github.sokobanJAVA.ecs.EntityFactory;
+import com.github.sokobanJAVA.ecs.systems.CollisionSystem;
+import com.github.sokobanJAVA.ecs.systems.InputSystem;
+import com.github.sokobanJAVA.ecs.systems.MovementSystem;
 import com.github.sokobanJAVA.ecs.systems.RenderSystem;
 
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -52,7 +55,7 @@ public class Main extends ApplicationAdapter {
 
         //
         stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
+        // Gdx.input.setInputProcessor(stage);
         Skin skin = new Skin(
                 Gdx.files.internal("clean-crispy/skin/clean-crispy-ui.json"));
         TextButton button = new TextButton("+", skin);
@@ -94,11 +97,20 @@ public class Main extends ApplicationAdapter {
 
         // 添加系统
         engine.addSystem(new RenderSystem(batch));
+        engine.addSystem(new InputSystem());
+        engine.addSystem(new MovementSystem(engine, 64));
+        engine.addSystem(new MovementSystem(engine, 64));
+        engine.addSystem(new CollisionSystem(engine));
 
         // 创建一个方块实体，位置 (100,100)
         factory.createRectangle(200, VIRTUAL_HEIGHT, frameboxTexture, 200, 200);
         factory.createRectangle(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2, frameboxTexture, 200, 200);
         factory.createRectangle(VIRTUAL_WIDTH, 0, frameboxTexture, 200, 200);
+        // factory.createPlayer(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, blockTexture);
+
+        factory.createWall(64, 64 * 3, blockTexture, 64, 64);
+        factory.createBox(64 * 2, 64, blockTexture, 64, 64);
+        factory.createPlayer(64, 64, blockTexture, 64, 64);
     }
 
     @Override
