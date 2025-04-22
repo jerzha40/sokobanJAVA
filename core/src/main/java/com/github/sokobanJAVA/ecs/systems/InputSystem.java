@@ -12,15 +12,25 @@ import com.badlogic.ashley.core.ComponentMapper;
 
 public class InputSystem extends IteratingSystem {
     private ComponentMapper<MoveComponent> mm = ComponentMapper.getFor(MoveComponent.class);
+    private Vector2 uiDir = new Vector2();
 
     public InputSystem() {
         super(Family.all(PlayerComponent.class, MoveComponent.class).get());
+    }
+
+    public void injectDirection(float x, float y) {
+        uiDir.set(x, y);
     }
 
     @Override
     protected void processEntity(Entity entity, float deltaTime) {
         MoveComponent move = mm.get(entity);
         move.reset();
+        if (!uiDir.isZero()) {
+            move.direction.set(uiDir);
+            uiDir.setZero();
+            return;
+        }
 
         Vector2 dir = move.direction;
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP)) {
